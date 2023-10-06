@@ -1,0 +1,51 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Email configuration (enter your email, password)
+sender_email = "your_email@gmail.com"
+sender_password = "your_email_password"
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+
+# List of recipients with their names and email addresses
+recipients = [
+    {"name": "Recipient 1", "email": "recipient1@example.com"},
+    {"name": "Recipient 2", "email": "recipient2@example.com"},
+    # Add more recipients as needed
+]
+
+# Email content
+subject = "Personalized Greetings"
+body_template = """Dear {name},
+
+This is a personalized message for you.
+
+Sincerely,
+Your Name
+"""
+
+# Function to send personalized emails
+def send_email(to_email, subject, body):
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to_email, msg.as_string())
+
+# Sending personalized emails
+for recipient in recipients:
+    name = recipient["name"]
+    email = recipient["email"]
+    personalized_body = body_template.format(name=name)
+    
+    send_email(email, subject, personalized_body)
+    print(f"Email sent to {name} ({email})")
+
+print("All emails sent successfully.")
